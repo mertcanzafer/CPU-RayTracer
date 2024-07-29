@@ -67,14 +67,14 @@ Image::~Image()
 uint32_t Image::ConvertColor(const double r, const double g, const double b) noexcept
 {
 	// Convert colors to unsigned char
-	unsigned char r = static_cast<unsigned char>(r);
-	unsigned char g = static_cast<unsigned char>(g);
-	unsigned char b = static_cast<unsigned char>(b);
+	unsigned char red = static_cast<unsigned char>(r);
+	unsigned char green = static_cast<unsigned char>(g);
+	unsigned char blue = static_cast<unsigned char>(b);
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	Uint32 pixelColor = (b << 24) + (g << 16) + (r << 8) + 255;
+	Uint32 pixelColor = (blue << 24) + (green << 16) + (red << 8) + 255;
 #else
-	Uint32 pixelColor = (255 << 24) + (r << 16) + (g << 8) + b;
+	Uint32 pixelColor = (255 << 24) + (red << 16) + (green << 8) + blue;
 #endif
 
 	return pixelColor;
