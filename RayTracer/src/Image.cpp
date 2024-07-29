@@ -34,6 +34,7 @@ void Image::Display() noexcept
 	// Clear the pixel buffer
 	memset(tmpPixels.get(), 0, sizeof(uint32_t) * m_xSize * m_ySize);
 
+	// Note: I ain't sure this works as I want. *	Need to check the order of the loop*
 	for (uint32_t y = 0; y < m_ySize; y++)
 	{
 		for (uint32_t x = 0; x < m_xSize; x++)
@@ -53,4 +54,55 @@ void Image::Display() noexcept
 	bounds = srcRect;
 
 	SDL_RenderCopy(m_pRenderer, m_pTexture, &srcRect, &bounds);
+}
+
+Image::~Image()
+{
+	if (m_pTexture)
+	{
+		SDL_DestroyTexture(m_pTexture);
+	}
+}
+
+uint32_t Image::ConvertColor(const double r, const double g, const double b) noexcept
+{
+	// Convert colors to unsigned char
+	unsigned char r = static_cast<unsigned char>(r);
+	unsigned char g = static_cast<unsigned char>(g);
+	unsigned char b = static_cast<unsigned char>(b);
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	Uint32 pixelColor = (b << 24) + (g << 16) + (r << 8) + 255;
+#else
+	Uint32 pixelColor = (255 << 24) + (r << 16) + (g << 8) + b;
+#endif
+
+	return pixelColor;
+}
+
+void Image::InitTexture()
+{
+	uint32_t rmask{}, gmask{}, bmask{}, amask{};
+
+#if  SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000; //4278190080
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+
+	// Delete any previously created texture before we create a new one.
+	if (m_pTexture)
+	{
+		SDL_DestroyTexture(m_pTexture);
+	}
+	// Create the texture that will store the image.
+	SDL_Surface* tempSurface = SDL_CreateRGBSurface(0, m_xSize, m_ySize, 32, rmask, gmask, bmask, amask);
+	m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, tempSurface);
+	SDL_FreeSurface(tempSurface);
 }
