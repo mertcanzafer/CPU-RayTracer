@@ -148,10 +148,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\App.h" />
+    <ClInclude Include="header\Image.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
